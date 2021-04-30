@@ -1,42 +1,62 @@
 package com.play.gitplayground;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.play.gitplayground.Repository.UserRepository;
 import com.play.gitplayground.model.User;
 import com.play.gitplayground.service.UserService;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class GitPlaygroundApplicationTests {
+public class GitPlaygroundApplicationTests {
+
+   // @Autowired
+    private UserService service;
+
+    @MockBean
+    private UserRepository repository;
 
     @Test
-    void contextLoads() {
+    public void getUsersTest() {
+        when(repository.findAll()).thenReturn(Stream
+                .of(new User(376, "Danile", 31, "USA"),
+                        new User(958, "Huy", 35, "UK")).collect(Collectors.toList()));
+        assertEquals(2, service.getUsers().size());
     }
 
-    @Autowired
-    private UserService userService;
-
-    @MockBean           // It allows to mock a class or an interface and to record and verify behaviors on it.
-    private UserRepository userRepository;
+    @Test
+    public void getUserbyAddressTest() {
+        String address = "Bangalore";
+        when(repository.findByAddress(address))
+                .thenReturn(Stream.of(new User(376, "Danile", 31, "USA")).collect(Collectors.toList()));
+        assertEquals(1, service.getUserbyAddress(address).size());
+    }
 
     @Test
-    public void getUserTest() {
-       when(userRepository.findAll()).thenReturn(Stream.of(
-               new User(1234,"Daniel",23, "USA"),
-               new User(958, "Andrew",57,"UK"))
-               .collect(Collectors.toList()));
-       assertEquals(2, userService.getUsers().size());
+    public void saveUserTest() {
+        User user = new User(999, "Pranya", 33, "Pune");
+        when(repository.save(user)).thenReturn(user);
+        assertEquals(user, service.addUser(user));
+    }
+
+    @Test
+    public void deleteUserTest() {
+        User user = new User(999, "Pranya", 33, "Pune");
+        service.deleteUser(user);
+        verify(repository, times(1)).delete(user);
     }
 
 }

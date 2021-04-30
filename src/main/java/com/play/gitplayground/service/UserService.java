@@ -12,21 +12,24 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository repository;
+
 
     public User addUser(User user) {
-        return userRepository.save(user);
+        return repository.save(user);
     }
+
     public List<User> getUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = repository.findAll();
+        System.out.println("Getting data from DB : " + users);
         return users;
     }
 
-    public List<User> getUserByAddress(String address) {
-        return userRepository.findByAddress(address);
+    public List<User> getUserbyAddress(String address) {
+        return repository.findByAddress(address);
     }
 
     public void deleteUser(User user) {
-        userRepository.delete(user);
+        repository.delete(user);
     }
 }

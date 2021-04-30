@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/getUserByAddress/{address}")
     public List<User> findUserByAddress(@PathVariable String address) {
-        return service.getUserByAddress(address);
+        return service.getUserbyAddress(address);
     }
 
     @DeleteMapping(value="/remove")
